@@ -1,6 +1,6 @@
 from device_discover import *
 from service_discover import *
-
+from write_report import *
 
 
 #Direciones a escanear
