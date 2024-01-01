@@ -6,7 +6,7 @@ def network_scan(subred):
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
     paquete = ether/arp
 
-    resultado = srp(paquete, timeout=3, verbose=0)[0]
+    resultado = srp(paquete, timeout=20, verbose=0)[0]
 
     devices = []
 

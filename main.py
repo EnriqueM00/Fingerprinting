@@ -8,7 +8,7 @@ devices = []
 for direction in directions:
     devices += network_scan(direction)
 
-    print("Dispositivos encontrados:")
+    print("Dispositivos encontrados en la red " + direction +" :")
     print("IP" + " "*18+"MAC")
     for device in devices:
         print("{:16}    {}".format(device['ip'], device['mac']))
