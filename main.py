@@ -18,19 +18,19 @@ for direction in directions:
         print("Dispositivos encontrados en la red " + direction +" :")
         print("IP" + " "*18+"MAC")
         for device in devices[direction]:
-            print("{:16}                  {}".format(device['ip'], device['mac']))
-            add_line_to_txt_file("reporte.txt", "IP: {} ".format(device['ip']))
-            add_line_to_txt_file("reporte.txt", "MAC: {} ".format(device['mac']))
-            print("Escaneando servicios de la ip " + device['ip'])
-        
-            ip = device['ip']
-            open_ports = scan_ports(ip)
-            services = scan_services(ip, open_ports)
-            print("Puerto" + " "*10 + "Servicio")
-            add_line_to_txt_file("reporte.txt", "Puerto" + " "*10 + "Servicio")
-            for port, service in services.items():
-                print("{:5}          {}".format(port, service))
-                add_line_to_txt_file("reporte.txt", "{:5}          {}".format(port, service))
-    else:
-        print("No se encontraron dispositivos en la red " + direction)
-        add_line_to_txt_file("reporte.txt", "No se encontraron dispositivos en la red " + direction)
+            if device is not None:
+                print("{:16}                  {}".format(device['ip'], device['mac']))
+                add_line_to_txt_file("reporte.txt", "IP: {} ".format(device['ip']))
+                add_line_to_txt_file("reporte.txt", "MAC: {} ".format(device['mac']))
+                print("Escaneando servicios de la ip " + device['ip'])
+            
+                ip = device['ip']
+                open_ports = scan_ports(ip)
+                services = scan_services(ip, open_ports)
+                print("Puerto" + " "*10 + "Servicio")
+                add_line_to_txt_file("reporte.txt", "Puerto" + " "*10 + "Servicio")
+                for port, service in services.items():
+                    print("{:5}          {}".format(port, service))
+                    add_line_to_txt_file("reporte.txt", "{:5}          {}".format(port, service))
+            else:
+                print("No se encontraron dispositivos en la red " + direction)
