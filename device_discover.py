@@ -60,7 +60,10 @@ def network_scan(subred):
             except Exception as exc:
                 print(f'La dirección IP {ip} generó una excepción: {exc}')
 
-    return devices
+    if len(devices) == 0:
+        return None
+    else:
+        return devices
 
 
 
