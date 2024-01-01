@@ -1,10 +1,10 @@
 from device_discover import *
 from service_discover import *
 from write_report import *
-
+from subnets_discover import *
 
 #Direciones a escanear
-directions = ["172.16.10.0/24", "172.20.10.0/24", "172.24.10.0/24", "172.28.10.0/24", "172.31.10.0/24"]
+directions = calculate_subnets("172.0.0.0/8")
 devices = {}
 generate_txt_file("reporte.txt", "Reporte de escaneo de red")
 for direction in directions:
@@ -16,8 +16,9 @@ for direction in directions:
     print("Dispositivos encontrados en la red " + direction +" :")
     print("IP" + " "*18+"MAC")
     for device in devices[direction]:
-        print("{:16}    {}".format(device['ip'], device['mac']))
-        add_line_to_txt_file("reporte.txt", "{:16}    {}".format(device['ip'], device['mac']))
+        print("{:16}                  {}".format(device['ip'], device['mac']))
+        add_line_to_txt_file("reporte.txt", "IP: {} ".format(device['ip']))
+        add_line_to_txt_file("reporte.txt", "MAC: {} ".format(device['mac']))
         print("Escaneando servicios de la ip " + device['ip'])
     
         ip = device['ip']
@@ -26,7 +27,5 @@ for direction in directions:
         print("Puerto" + " "*10 + "Servicio")
         add_line_to_txt_file("reporte.txt", "Puerto" + " "*10 + "Servicio")
         for port, service in services.items():
-            print("{:5}    {}".format(port, service))
-            add_line_to_txt_file("reporte.txt", "{:5}    {}".format(port, service))
-
-
+            print("{:5}          {}".format(port, service))
+            add_line_to_txt_file("reporte.txt", "{:5}          {}".format(port, service))
