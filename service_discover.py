@@ -1,6 +1,7 @@
 import socket
 import nmap
 import threading
+import concurrent.futures
 
 def scan_port(ip, port, open_ports):
     """
@@ -23,23 +24,20 @@ def scan_port(ip, port, open_ports):
 
 def scan_ports(ip):
     """
-    Escanea los puertos de una dirección IP dada y devuelve una lista de puertos abiertos.
+    Escanea la dirección IP especificada en busca de puertos abiertos.
 
     Args:
         ip (str): La dirección IP a escanear.
 
     Returns:
-        list: Una lista de puertos abiertos.
+        list: Una lista de puertos abiertos encontrados durante el escaneo.
     """
     open_ports = []
-    threads = []
+    ports_to_scan = range(1, 65535)
 
-    for port in range(1, 65535):
-        thread = threading.Thread(target=scan_port, args=(ip, port, open_ports))
-        thread.start()
-        threads.append(thread)
-
-    for thread in threads:
-        thread.join()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1000) as executor:
+        future_to_port = {executor.submit(scan_port, ip, port, open_ports): port for port in ports_to_scan}
+        for future in concurrent.futures.as_completed(future_to_port):
+            pass
 
     return open_ports
