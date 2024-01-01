@@ -16,13 +16,13 @@ for direction in directions:
     for device in devices[direction]:
         print("{:16}    {}".format(device['ip'], device['mac']))
 
-    print("Escaneando servicios de la red " + direction)
+        print("Escaneando servicios de la red " + direction)
     
-    ip = direction.split("/")[0]
-    open_ports = scan_ports(ip)
-    services = scan_services(ip, open_ports)
-    print("Puertos abiertos y servicios:")
-    for port, service in services.items():
-        print(f"Puerto: {port}, Servicio: {service}")
+        ip = device['ip']
+        open_ports = scan_ports(ip)
+        services = scan_services(ip, open_ports)
+        print("Puertos abiertos y servicios:")
+        for port, service in services.items():
+            print(f"Puerto: {port}, Servicio: {service}")
 
 
