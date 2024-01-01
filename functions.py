@@ -8,9 +8,9 @@ def network_scan(subred):
 
     resultado = srp(paquete, timeout=3, verbose=0)[0]
 
-    dispositivos = []
+    devices = []
 
     for sent, received in resultado:
-        dispositivos.append({'ip': received.psrc, 'mac': received.hwsrc})
+        devices.append({'ip': received.psrc, 'mac': received.hwsrc})
 
-    return dispositivos
+    return devices
