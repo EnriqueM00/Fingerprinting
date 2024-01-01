@@ -1,4 +1,6 @@
 from scapy.all import  ICMP, IP, sr, srp, Ether, ARP, conf
+from helpers import *
+
 # Configuracion global de el valor de verbosidad de scapy
 # 0 = false
 # 1 = true
@@ -13,7 +15,10 @@ def network_scan(subred):
     devices = []
 
     for sent, received in result:
-        devices.append({'ip': received.src, 'mac': obtain_mac(received.src)})
+        if belongs_to_my_network(received.src):
+            devices.append({'ip': received.src, 'mac': obtain_mac(received.src)})
+        else:
+            devices.append({'ip': received.src, 'mac': None})
 
     return devices
 
