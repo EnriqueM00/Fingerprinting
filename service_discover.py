@@ -39,21 +39,22 @@ def scan_ports(ip):
         future_to_port = {executor.submit(scan_port, ip, port, open_ports): port for port in ports_to_scan}
         for future in concurrent.futures.as_completed(future_to_port):
             pass
-
+    print("Puertos abiertos: " + str(open_ports))
     return open_ports
 
 def scan_services(ip, ports):
     """
-    Escanea la dirección IP especificada en busca de puertos abiertos y devuelve un diccionario
-    que mapea cada puerto abierto con su correspondiente nombre de servicio.
+    Escanea la dirección IP especificada en busca de puertos abiertos y devuelve un diccionario de servicios que se ejecutan en esos puertos.
 
     Parámetros:
     ip (str): La dirección IP a escanear.
-    ports (list): Una lista de números de puerto a escanear.
+    ports (list): Una lista de puertos a escanear.
     """
+
     nm = nmap.PortScanner()
     services = {}
     for port in ports:
+        print("Escaneando puerto " + str(port))
         res = nm.scan(ip, str(port))
         res = res['scan'][ip]['tcp'][port]['name']
         services[port] = res
