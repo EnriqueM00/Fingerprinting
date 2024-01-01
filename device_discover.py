@@ -1,6 +1,8 @@
 import logging
 from scapy.all import  ICMP, IP, sr, srp, Ether, ARP, conf
 from helpers import *
+from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures
 
 #Evitar que scapy imprima mensajes de warning en la consola 
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
@@ -12,6 +14,25 @@ conf.verb = 0
 
 network_verbose = 0 #Nivel de verbosidad de la funcion 
 network_timeout = 5 #Tiempo de espera para obtener la MAC de un dispositivo
+def scan_ip(ip):
+    """
+    Realiza un escaneo de una dirección IP utilizando el protocolo ICMP.
+
+    Args:
+        ip (str): La dirección IP a escanear.
+
+    Returns:
+        dict: Un diccionario que contiene la dirección IP y la dirección MAC del dispositivo encontrado.
+    """
+    paquete = IP(dst=ip)/ICMP()
+    result = sr(paquete, timeout=network_timeout, verbose=network_verbose)[0]
+
+    for sent, received in result:
+        if belongs_to_my_network(received.src):
+            return {'ip': received.src, 'mac': obtain_mac(received.src)}
+        else:
+            return {'ip': received.src, 'mac': 'Desconocida'}
+
 def network_scan(subred):
     """
     Realiza un escaneo de red utilizando el protocolo ICMP para descubrir dispositivos activos en la subred especificada.
@@ -22,16 +43,22 @@ def network_scan(subred):
     Returns:
         list: Una lista de diccionarios que contienen la dirección IP y la dirección MAC de los dispositivos encontrados en la subred.
     """
-    paquete = IP(dst=subred)/ICMP()
-    result = sr(paquete, timeout=network_timeout, verbose=network_verbose)[0]
+    # Crea una lista de todas las direcciones IP en la subred
+    network = ipaddress.ip_network(subred)
+    ip_addresses = [str(ip) for ip in network.hosts()]
 
     devices = []
 
-    for sent, received in result:
-        if belongs_to_my_network(received.src):
-            devices.append({'ip': received.src, 'mac': obtain_mac(received.src)})
-        else:
-            devices.append({'ip': received.src, 'mac': 'Desconocida'})
+    # Crea un pool de hilos y realiza un escaneo de cada dirección IP en la subred
+    with ThreadPoolExecutor(max_workers=100) as executor:
+        future_to_ip = {executor.submit(scan_ip, ip): ip for ip in ip_addresses}
+        for future in concurrent.futures.as_completed(future_to_ip):
+            ip = future_to_ip[future]
+            try:
+                device = future.result()
+                devices.append(device)
+            except Exception as exc:
+                print(f'La dirección IP {ip} generó una excepción: {exc}')
 
     return devices
 
