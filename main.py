@@ -1,4 +1,5 @@
-from functions import *
+from device_discover import *
+from service_discover import *
 
 
 
@@ -14,4 +15,13 @@ for direction in directions:
     print("IP" + " "*18+"MAC")
     for device in devices[direction]:
         print("{:16}    {}".format(device['ip'], device['mac']))
+
+    print("Escaneando servicios de la red " + direction)
+
+    open_ports = scan_ports(direction)
+    services = scan_services(direction, open_ports)
+    print("Puertos abiertos y servicios:")
+    for port, service in services.items():
+        print(f"Puerto: {port}, Servicio: {service}")
+
 

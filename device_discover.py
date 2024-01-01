@@ -1,5 +1,9 @@
+import logging
 from scapy.all import  ICMP, IP, sr, srp, Ether, ARP, conf
 from helpers import *
+
+#Evitar que scapy imprima mensajes de warning en la consola 
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 # Configuracion global de el valor de verbosidad de scapy
 # 0 = false
@@ -18,7 +22,7 @@ def network_scan(subred):
         if belongs_to_my_network(received.src):
             devices.append({'ip': received.src, 'mac': obtain_mac(received.src)})
         else:
-            devices.append({'ip': received.src, 'mac': None})
+            devices.append({'ip': received.src, 'mac': 'Desconocida'})
 
     return devices
 
