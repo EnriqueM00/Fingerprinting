@@ -2,21 +2,17 @@ from script_scan import *
 
 from scapy.all import ARP, Ether, srp
 
-def escanear_red(subred):
-    arp = ARP(pdst=subred)
-    ether = Ether(dst="ff:ff:ff:ff:ff:ff")
-    paquete = ether/arp
+# Direciones a escanear
+directions = ["172.16.10.0/24", "172.20.10.0/24", "172.24.10.0/24", "172.28.10.0/24", "172.31.10.0/24"]
+devices = []
+for direction in directions:
+    devices += scan(direction)
 
-    resultado = srp(paquete, timeout=3, verbose=0)[0]
+    print("Dispositivos encontrados:")
+    print("IP" + " "*18+"MAC")
+    for device in devices:
+        print("{:16}    {}".format(device['ip'], device['mac']))
 
-    dispositivos = []
-
-    for sent, received in resultado:
-        dispositivos.append({'ip': received.psrc, 'mac': received.hwsrc})
-
-    return dispositivos
-
-# Ejemplo de uso
-dispositivos = escanear_red("172.0.0.0/24")
-for dispositivo in dispositivos:
-    print("IP: {}, MAC: {}".format(dispositivo['ip'], dispositivo['mac']))
+        for port in range(1, 65.535):
+            result = mapports(device, str(port))
+            print(result)
