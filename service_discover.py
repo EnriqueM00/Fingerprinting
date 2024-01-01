@@ -41,3 +41,20 @@ def scan_ports(ip):
             pass
 
     return open_ports
+
+def scan_services(ip, ports):
+    """
+    Escanea la dirección IP especificada en busca de puertos abiertos y devuelve un diccionario
+    que mapea cada puerto abierto con su correspondiente nombre de servicio.
+
+    Parámetros:
+    ip (str): La dirección IP a escanear.
+    ports (list): Una lista de números de puerto a escanear.
+    """
+    nm = nmap.PortScanner()
+    services = {}
+    for port in ports:
+        res = nm.scan(ip, str(port))
+        res = res['scan'][ip]['tcp'][port]['name']
+        services[port] = res
+    return services
