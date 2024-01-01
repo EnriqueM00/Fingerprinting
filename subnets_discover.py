@@ -15,8 +15,6 @@ def calculate_subnets(network, prefixlen_diff=16):
     parent_network = ipaddress.ip_network(network, strict=False)
     subnets = list(parent_network.subnets(prefixlen_diff=prefixlen_diff))
 
-    print("Subredes calculadas:")
-    for subnet in subnets:
-        print(subnet)
+    print("Se han calculado un total de " + str(len(subnets)) + " subredes posibles")
 
     return [str(subnet) for subnet in subnets]
