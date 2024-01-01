@@ -1,18 +1,28 @@
-from scapy.all import  ICMP, IP, sr, srp, Ether, ARP
+from scapy.all import  ICMP, IP, sr, srp, Ether, ARP, conf
+# Configuracion global de el valor de verbosidad de scapy
+# 0 = false
+# 1 = true
+conf.verb = 0
 
-
+network_verbose = 0 #Nivel de verbosidad de la funcion 
+network_timeout = 5 #Tiempo de espera para obtener la MAC de un dispositivo
 def network_scan(subred):
     paquete = IP(dst=subred)/ICMP()
-    resultado = sr(paquete, timeout=2, verbose=0)[0]
+    result = sr(paquete, timeout=network_timeout, verbose=network_verbose)[0]
 
-    dispositivos = []
+    devices = []
 
-    for sent, received in resultado:
-        dispositivos.append({'ip': received.src, 'mac': obtener_mac(received.src)})
+    for sent, received in result:
+        devices.append({'ip': received.src, 'mac': obtain_mac(received.src)})
 
-    return dispositivos
+    return devices
 
-def obtener_mac(ip):
-    respuestas, no_respuestas = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ip), timeout=2, retry=10, verbose=0)
-    for s, r in respuestas:
+
+
+mac_timeout = 5 #Tiempo de espera para obtener la MAC de un dispositivo
+mac_retry = 2 #Numero de intentos para obtener la MAC de un dispositivo
+mac_verbose = 0 #Nivel de verbosidad de la funcion srp
+def obtain_mac(ip):
+    reply, not_reply = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ip), timeout=mac_timeout, retry=mac_retry, verbose=mac_verbose)
+    for s, r in reply:
         return r[Ether].src
