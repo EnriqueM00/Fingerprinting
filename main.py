@@ -40,7 +40,3 @@ for direction in directions:
                     for port, service in services.items():
                         print("{:5}          {}".format(port, service))
                         add_line_to_txt_file("reporte.txt", "{:5}          {}".format(port, service))
-                
-            else:
-                print("No se encontraron dispositivos en la red " + direction)
-                add_line_to_txt_file("reporte.txt", "No se encontraron dispositivos en la red " + direction)
