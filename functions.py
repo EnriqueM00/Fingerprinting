@@ -1,16 +1,18 @@
-from scapy.all import ARP, Ether, srp
+from scapy.all import  ICMP, IP, sr, srp, Ether, ARP
 
 
 def network_scan(subred):
-    arp = ARP(pdst=subred)
-    ether = Ether(dst="ff:ff:ff:ff:ff:ff")
-    paquete = ether/arp
+    paquete = IP(dst=subred)/ICMP()
+    resultado = sr(paquete, timeout=2, verbose=0)[0]
 
-    resultado = srp(paquete, timeout=20, verbose=0)[0]
-
-    devices = []
+    dispositivos = []
 
     for sent, received in resultado:
-        devices.append({'ip': received.psrc, 'mac': received.hwsrc})
+        dispositivos.append({'ip': received.src, 'mac': obtener_mac(received.src)})
 
-    return devices
+    return dispositivos
+
+def obtener_mac(ip):
+    respuestas, no_respuestas = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ip), timeout=2, retry=10, verbose=0)
+    for s, r in respuestas:
+        return r[Ether].src
