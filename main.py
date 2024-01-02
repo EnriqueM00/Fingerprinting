@@ -9,7 +9,9 @@ devices = {}
 generate_txt_file("reporte.txt", "Reporte de escaneo de red")
 for direction in directions:
     print("Escaneando red " + direction)
+    add_line_to_txt_file("reporte.txt", "*"*40 )
     add_line_to_txt_file("reporte.txt", "Red " + direction)
+    add_line_to_txt_file("reporte.txt", "*"*40 )
     print("Progreso: " + str(directions.index(direction)) + "/" + str(len(directions)) + " redes escaneadas")
     result = network_scan(direction)
     if result != None:
