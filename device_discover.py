@@ -33,6 +33,7 @@ def scan_ip(ip):
         else:
             return {'ip': received.src, 'mac': 'Desconocida'}
 
+network_scan_max_workers = 100 # Número máximo de hilos a utilizar para escanear la red
 def network_scan(subred):
     """
     Realiza un escaneo de red utilizando el protocolo ICMP para descubrir dispositivos activos en la subred especificada.
@@ -50,7 +51,7 @@ def network_scan(subred):
     devices = []
 
     # Crea un pool de hilos y realiza un escaneo de cada dirección IP en la subred
-    with ThreadPoolExecutor(max_workers=100) as executor:
+    with ThreadPoolExecutor(max_workers=network_scan_max_workers) as executor:
         future_to_ip = {executor.submit(scan_ip, ip): ip for ip in ip_addresses}
         for future in concurrent.futures.as_completed(future_to_ip):
             ip = future_to_ip[future]
@@ -78,8 +79,12 @@ def obtain_mac(ip):
     ip (str): La dirección IP del dispositivo.
 
     Retorna:
-    str: La dirección MAC del dispositivo.
+    str: La dirección MAC del dispositivo, o None si no se pudo obtener.
     """
-    reply, not_reply = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ip), timeout=mac_timeout, retry=mac_retry, verbose=mac_verbose)
-    for s, r in reply:
-        return r[Ether].src
+    try:
+        reply, _ = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ip), timeout=mac_timeout, retry=mac_retry, verbose=mac_verbose)
+        for _, r in reply:
+            return r[Ether].src
+    except Exception as e:
+        print(f"Error al obtener la dirección MAC de {ip}: {e}")
+    return None

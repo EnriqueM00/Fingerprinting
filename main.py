@@ -17,11 +17,9 @@ for direction in directions:
 
         print("Dispositivos encontrados en la red " + direction +" :")
         print("IP" + " "*18+"MAC")
-        print("Se encontraron " + str(len(devices[direction])) + " dispositivos en la red " + direction)
-        add_line_to_txt_file("reporte.txt", "Se encontraron " + str(len(devices[direction])) + " dispositivos en la red " + direction)
         for device in devices[direction]:
             if device is not None:
-                print("-"*40)
+                print("-"*60)
                 add_line_to_txt_file("reporte.txt", "-"*40)
                 print("{:16}                  {}".format(device['ip'], device['mac']))
                 add_line_to_txt_file("reporte.txt", "IP: {} ".format(device['ip']))
