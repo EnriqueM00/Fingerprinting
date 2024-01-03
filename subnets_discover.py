@@ -2,19 +2,22 @@ import ipaddress
 
 def calculate_subnets(network, prefixlen_diff=16):
     """
-    Calcula todas las posibles subredes de una red padre.
+    Calcula las subredes posibles a partir de una red dada.
 
-    Parámetros:
-    network (str): La red padre en formato CIDR.
-    prefixlen_diff (int): La diferencia entre la longitud del prefijo de la red padre y la de las subredes. Por defecto es 16.
+    Args:
+        network (str): La dirección de red en formato CIDR.
+        prefixlen_diff (int, optional): La diferencia en el prefijo de longitud para calcular las subredes. 
+            Por defecto es 16.
 
-    Devuelve:
-    list: Una lista de subredes en formato CIDR.
+    Returns:
+        list: Una lista de las subredes posibles en formato CIDR.
     """
 
     parent_network = ipaddress.ip_network(network, strict=False)
     subnets = list(parent_network.subnets(prefixlen_diff=prefixlen_diff))
 
-    print("Se han calculado un total de " + str(len(subnets)) + " subredes posibles")
+    private_subnets = [str(subnet) for subnet in subnets if subnet.is_private]
 
-    return [str(subnet) for subnet in subnets]
+    print("Se han calculado un total de " + str(len(private_subnets)) + " subredes posibles")
+
+    return private_subnets
