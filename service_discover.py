@@ -40,7 +40,10 @@ def scan_ports(ip):
     with concurrent.futures.ThreadPoolExecutor(max_workers=scan_ports_max_workers) as executor:
         future_to_port = {executor.submit(scan_port, ip, port, open_ports): port for port in ports_to_scan}
         for future in concurrent.futures.as_completed(future_to_port):
-            pass
+            if len(open_ports) > 1000:
+                print("Todos los puertos están abiertos. Esto podría ser un honeypot.")
+                executor.shutdown(wait=False)
+                return "honeypot_detected"
     print("Puertos abiertos: " + str(open_ports))
     return open_ports
 

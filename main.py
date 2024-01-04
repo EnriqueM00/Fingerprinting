@@ -18,24 +18,32 @@ for direction in directions:
         devices[direction] = result
 
         print("Dispositivos encontrados en la red " + direction +" :")
-        print("IP" + " "*18+"MAC")
         for device in devices[direction]:
             if device is not None:
                 print("-"*60)
                 add_line_to_txt_file("reporte.txt", "-"*40)
-                print("{:16}                  {}".format(device['ip'], device['mac']))
+                print("IP: {} ".format(device['ip']))
                 add_line_to_txt_file("reporte.txt", "IP: {} ".format(device['ip']))
                 add_line_to_txt_file("reporte.txt", "MAC: {} ".format(device['mac']))
+                host_name = get_hostname(ip)
+                if host_name is not None:
+                    print("Nombre del host: " + host_name)
+                    add_line_to_txt_file("reporte.txt", "Nombre del host: " + host_name)
+                os = get_os(ip)
+                if os is not None:
+                    print("Sistema operativo: " + os)
+                    add_line_to_txt_file("reporte.txt", "Sistema operativo: " + os)
+
                 print("Escaneando servicios de la ip " + device['ip'])
             
                 ip = device['ip']
                 open_ports = scan_ports(ip)
-                if len(open_ports) == 0:
+                if open_ports == "honeypot_detected":
+                    print("Todos los puertos están abiertos. Esto podría ser un honeypot.")
+                    add_line_to_txt_file("reporte.txt", "Todos los puertos están abiertos. Esto podría ser un honeypot.")
+                elif len(open_ports) == 0:
                     print("No se encontraron puertos abiertos en la ip " + ip)
                     add_line_to_txt_file("reporte.txt", "No se encontraron puertos abiertos en la ip " + ip)
-                elif len(open_ports) > 1000:
-                    add_line_to_txt_file("reporte.txt", "Mas de 1000 puertos están abiertos. Esto podría ser un honeypot.")
-                    print("Mas de 1000 puertos están abiertos. Esto podría ser un honeypot.")
                 else:
                     services = scan_services(ip, open_ports)
                     print("Puerto" + " "*10 + "Servicio")

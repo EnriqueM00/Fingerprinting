@@ -3,6 +3,8 @@ from scapy.all import  ICMP, IP, sr, srp, Ether, ARP, conf
 from helpers import *
 from concurrent.futures import ThreadPoolExecutor
 import concurrent.futures
+import socket
+import nmap
 
 #Evitar que scapy imprima mensajes de warning en la consola 
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
@@ -88,3 +90,43 @@ def obtain_mac(ip):
     except Exception as e:
         print(f"Error al obtener la dirección MAC de {ip}: {e}")
     return None
+
+def get_hostname(ip):
+    """
+    Obtiene el nombre del host de la dirección IP especificada.
+
+    Args:
+        ip (str): La dirección IP.
+
+    Returns:
+        str: El nombre del host, o None si no se pudo determinar.
+    """
+    try:
+        host_name = socket.gethostbyaddr(ip)[0]
+        return host_name
+    except socket.herror:
+        print("No se pudo determinar el nombre del host para la IP " + ip)
+        return None
+    
+def get_os(ip):
+    """
+    Intenta determinar el sistema operativo del host en la dirección IP especificada.
+
+    Args:
+        ip (str): La dirección IP del host.
+
+    Returns:
+        str: El sistema operativo del host, o None si no se pudo determinar.
+    """
+    nm = nmap.PortScanner()
+    try:
+        res = nm.scan(ip, arguments='-O')
+        if 'osmatch' in res['scan'][ip]:
+            os = res['scan'][ip]['osmatch'][0]['name']
+            return os
+        else:
+            print("No se pudo determinar el sistema operativo para la IP " + ip)
+            return None
+    except Exception as e:
+        print("Error al escanear la IP " + ip + ": " + str(e))
+        return None
