@@ -30,10 +30,16 @@ for direction in directions:
                 if host_name is not None:
                     print("Nombre del host: " + host_name)
                     add_line_to_txt_file("reporte.txt", "Nombre del host: " + host_name)
+                else:
+                    print("No se pudo determinar el nombre del host para la IP " + ip)
+                    add_line_to_txt_file("reporte.txt", "No se pudo determinar el nombre del host para la IP " + ip)
                 os = get_os(ip)
                 if os is not None:
                     print("Sistema operativo: " + os)
                     add_line_to_txt_file("reporte.txt", "Sistema operativo: " + os)
+                else:
+                    print("No se pudo determinar el sistema operativo para la IP " + ip)
+                    add_line_to_txt_file("reporte.txt", "No se pudo determinar el sistema operativo para la IP " + ip)
 
                 print("Escaneando servicios de la ip " + device['ip'])
             
