@@ -33,6 +33,9 @@ for direction in directions:
                 if len(open_ports) == 0:
                     print("No se encontraron puertos abiertos en la ip " + ip)
                     add_line_to_txt_file("reporte.txt", "No se encontraron puertos abiertos en la ip " + ip)
+                elif len(open_ports) > 1000:
+                    add_line_to_txt_file("reporte.txt", "Mas de 1000 puertos están abiertos. Esto podría ser un honeypot.")
+                    print("Mas de 1000 puertos están abiertos. Esto podría ser un honeypot.")
                 else:
                     services = scan_services(ip, open_ports)
                     print("Puerto" + " "*10 + "Servicio")
